@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>树洞-分类</title>
+  <link href="../static/myImages/树洞.jpg"  rel="icon" type="image/x-ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+  <link rel="stylesheet" href="../static/css/me.css" >
+  <link rel="stylesheet" href="../static/css/TGTool.css">
+</head>
+<body>
+
+<!--导航-->
+<nav class="gird-header" id="nav">
+  
+</nav>
+
+
+<!--顶部图片-->
+<div class="m-bg-type_outer" style="width: 100%;height: 40%">
+  <img src="../static/myImages/云天空.jpg" alt="" class="ui m-bg image" style="width: 100%;height: 100%">
+  <div class="m-bg-class_cover">
+    <div class="ui container" style="position: relative ;bottom: -540px;">
+      <div class="m-font-size-title m-right-bottom" align="center" style="font-family:'STXingkai'">文章分类</div>
+      <div class="m-font-size-text-init-title m-margin-top" align="center">记忆是一种相聚的方式，放下是一种自由的形式。不必悲伤，不必忧愁，邂逅的回忆都是美好的故事</div>
+    </div>
+  </div>
+</div>
+
+
+<!--中间内容-->
+<div  class="m-margin- animated fadeIn">
+  <div class="ui container" id="typesBlogs">
+	  
+	  
+  </div>
+  
+</div>
+
+<br>
+<br>
+<!--底部栏-->
+<footer class="ui inverted vertical segment m-padded-tb-massive m-opacity" id="home-end">
+ 
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+<script src="js/handlebars-v4.7.7.js"></script>
+<script src="js/myJs.js"></script>
+<script src="js/TGTool.js"></script>
+<script src="https://eqcn.ajz.miesnfu.com/wp-content/plugins/wp-3d-pony/live2dw/lib/L2Dwidget.min.js"></script>
+
+<script>
+	     <!--小帅哥： https://unpkg.com/live2d-widget-model-chitose@1.0.5/assets/chitose.model.json-->
+	      <!--萌娘：https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json-->
+	      <!--小可爱（女）：https://unpkg.com/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json-->
+	      <!--小可爱（男）：https://unpkg.com/live2d-widget-model-haruto@1.0.5/assets/haruto.model.json-->
+	      <!--初音：https://unpkg.com/live2d-widget-model-miku@1.0.5/assets/miku.model.json-->
+	    L2Dwidget.init({ "model": { jsonPath:
+	          "https://unpkg.com/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json",
+	        "scale": 1 }, "display": { "position": "left", "width": 110, "height": 150,
+	        "hOffset": 0, "vOffset": -20 }, "mobile": { "show": true, "scale": 0.5 },
+	      "react": { "opacityDefault": 0.8, "opacityOnHover": 0.1 } });
+	  </script>
+
+<script>
+	$(function(){
+		chackLogin(0);
+	  $("#nav").load("home-top.html")
+	  $("#home-end").load("home-end.html")
+	  typesBlogs(-1)
+	});
+	var Tid="";//全局typeid
+	function typesBlogs(typeId){
+		Tid=typeId;
+		var url="";
+			if(typeId==-1)
+				url="http://81.71.4.36:18080/typesBlogs";
+			else
+				url="http://81.71.4.36:18080/typesBlogs?typeId="+typeId;
+			myAjax("GET","json",url,"","token","#typesBlogsT","#typesBlogs",0,1);
+		}
+</script>
+</body>
+<script type="text/template" id="typesBlogsT">
+    <div class="ui segment m-padded-tb-large m-opacity">
+      <div class="ui container" align="center">
+	  {{#each typeList}}
+        <div class="ui labeled button m-margin-tb-tiny">
+          <a href="javascript:void(0)" onclick="typesBlogs({{id}})" class="ui basic  button">{{name}}</a>
+          <div class="ui basic  left pointing label">{{blogs.length}}</div>
+        </div>
+		{{/each}}
+      </div>
+    </div>
+
+    <div class="ui top attached teal m-opacity segment">
+	{{#each pageInfo.records}}
+      <div class="ui padded vertical segment m-padded-tb-large">
+        <div class="ui middle aligned mobile reversed stackable grid" >
+          <div class="eleven wide column">
+            <h3 class="ui header" ><a href="blog.html?id={{id}}">{{title}}</a></h3>
+            <p class="m-text">{{description}}</p>
+            <div class="ui grid">
+              <div class="eleven wide column">
+                <div class="ui mini horizontal link list">
+                  <div class="item">
+                    <img src="{{avatar}}"  alt="" class="ui avatar image">
+                    <div class="content"><a href="message.html" target="_blank" class="header">{{nickname}}</a></div>
+                  </div>
+                  <div class="item">
+                    <i class="calendar icon"></i><span>{{updateTime}}</span>
+                  </div>
+                  <div class="item">
+                    <i class="eye icon"></i> <span>{{views}}</span>
+                  </div>
+                  <div class="item">
+                    <i class="comment outline icon"></i> <span>{{comentCount}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="right aligned five wide column">
+                <p class="ui teal basic label m-padded-tiny m-text-thin">{{typeName}}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="five wide column">
+            <a href="blog.html?id={{id}}" target="_blank">
+              <img src="{{firstPicture}}" alt="" class="ui rounded image">
+            </a>
+          </div>
+        </div>
+      </div>
+	  {{/each}}
+    </div>
+
+    <!--分页-->
+    <div class="ui bottom attached segment m-opacity stackable grid">
+      <div class="three wide column" align="center">
+        <a class="item" href="javascript:void(0)" onclick="pages({{pageInfo.pageNum}},{{pageInfo.pages}},0,Tid)">上一页</a>
+      </div>
+
+      <div class="ten wide column" align="center">
+        <p> <span></span> {{pageInfo.pageNum}}/{{pageInfo.pages}} <span></span> </p>
+      </div>
+
+      <div class="three wide column" align="center">
+        <a class="item" href="javascript:void(0)" onclick="pages({{pageInfo.pageNum}},{{pageInfo.pages}},1,Tid)">下一页</a>
+      </div>
+    </div>
+	</script>
+</html>

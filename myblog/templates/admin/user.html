@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>用户管理</title>
+		<link href="../../static/myImages/树洞.jpg" rel="icon" type="image/x-ico">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+		<link rel="stylesheet" href="../../static/css/me.css">
+		<link rel="stylesheet" href="../js/sweetalert.css">
+		<link rel="stylesheet" href="../../static/css/TGTool.css">
+	</head>
+	<body>
+
+		<!--导航栏-->
+		<nav class="ui inverted gird-header" id="top">
+
+		</nav>
+
+		<div class="m-padded-tb-hugex">
+			
+		</div>
+
+		<!--中间内容-->
+		<div class="m-padded-tb-big">
+			<div class="ui container" id="userList">
+				
+			</div>
+		</div>
+
+		<br>
+		<br>
+
+		
+		
+		<div class="ui mini test modal" id="delete" >
+		  <div class="header">注销用户</div>
+		  <div class="content">
+		    <p>是否删除该用户，此操作将不可撤销？</p>
+		  </div>
+		  <div class="actions">
+			  <div class="ui cancel button">返回</div>
+			<div class="ui positive right labeled icon button">
+				确认删除
+				<i class="checkmark icon"></i>
+			</div>
+		  </div>
+		</div>
+
+
+			<!--弹出层-->
+		<div class="ui modal" id="userMessage">
+			
+		</div>
+		<script type="text/template" id="userMessageT">
+			<i class="close icon"></i>
+			<div class="header">
+				{{username}}
+			</div>
+			<div class="image content">
+				<div class="ui small image">
+					<img src="{{avatar}}">
+				</div>
+				<div class="ui small image"></div>
+				<div class="ui equal width form">
+					<form id="updateUser">
+					<input name="id" value="{{id}}" hidden="hidden">
+					<div class="fields">
+						<div class="field">
+							<label>用户名</label>
+							<input type="text" value="{{username}}" name="username">
+						</div>
+						<div class="field">
+							<label>密码</label>
+							<input type="text" value="{{password}}" name="password">
+						</div>
+					</div>
+					<div class="fields">
+						<div class="field">
+							<label>昵称</label>
+							<input type="text" value="{{nickname}}" name="nickname">
+						</div>
+						<div class="field">
+							<label>email</label>
+							<input type="text" value="{{email}}" name="email">
+						</div>
+					</div>
+					<div class="fields">
+						<div class="field">
+							<label>注册时间</label>
+							<input type="text" value="{{createTime}}" readonly="readonly">
+						</div>
+						<div class="field">
+							<label>最近更新</label>
+							<input type="text" value="{{updateTime}}" readonly="readonly" >
+						</div>
+					</div>
+					<div class="fields">
+						<div class="field">
+							<label>是否推荐</label>
+							<select class="ui dropdown" name="recommend">
+							  {{#if recommend}}
+							  <option value="true" selected="selected">是</option>
+							  <option value="false" >否</option>
+							  {{else}}
+							  <option value="true" >是</option>
+							  <option value="false" selected="selected">否</option>
+							  {{/if}}
+							</select>
+						</div>
+						<div class="field">
+							<label>角色</label>
+							<select class="ui dropdown" name="type">
+							  {{#ifCond type '==' 0}}
+							  <option value="0" selected="selected">管理员</option>
+							  <option value="1" >用户</option>
+							  {{else}}
+							  <option value="0" >管理员</option>
+							  <option value="1" selected="selected">用户</option>
+							  {{/ifCond}}
+							</select>
+						</div>
+					</div>
+					</form>
+				</div>
+			</div>
+			<div class="actions">
+			
+				<div class="ui black deny button">
+					返回
+				</div>
+			
+				<div class="ui positive right labeled icon button" onclick="updateUser()">
+					修改
+					<i class="checkmark icon"></i>
+				</div>
+			</div>
+		</script>
+		
+		<!--底部栏-->
+		<footer class="ui inverted vertical segment m-padded-tb-massive m-opacity" id="end">
+
+		</footer>
+
+		<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+		<script src="../js/handlebars-v4.7.7.js" type="text/javascript"></script>
+		<script src="../js/myJs.js"></script>
+		<script src="../js/TGTool.js"></script>
+		<script src="../js/sweetalert-dev.js"></script>
+		<script src="https://eqcn.ajz.miesnfu.com/wp-content/plugins/wp-3d-pony/live2dw/lib/L2Dwidget.min.js"></script>
+		
+		<script>
+			     <!--小帅哥： https://unpkg.com/live2d-widget-model-chitose@1.0.5/assets/chitose.model.json-->
+			      <!--萌娘：https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json-->
+			      <!--小可爱（女）：https://unpkg.com/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json-->
+			      <!--小可爱（男）：https://unpkg.com/live2d-widget-model-haruto@1.0.5/assets/haruto.model.json-->
+			      <!--初音：https://unpkg.com/live2d-widget-model-miku@1.0.5/assets/miku.model.json-->
+			    L2Dwidget.init({ "model": { jsonPath:
+			          "https://unpkg.com/live2d-widget-model-haruto@1.0.5/assets/haruto.model.json",
+			        "scale": 1 }, "display": { "position": "left", "width": 110, "height": 150,
+			        "hOffset": 0, "vOffset": -20 }, "mobile": { "show": true, "scale": 0.5 },
+			      "react": { "opacityDefault": 0.8, "opacityOnHover": 0.1 } });
+			  </script>
+		
+		<script>
+			$(function() {
+				chackLogin(1)
+				$("#top").load("top.html");
+				$("#end").load("end.html");
+				myAjax("GET","json","http://81.71.4.36:18080/users","-1","admintoken","#userListT","#userList",0,1);
+			});
+		</script>
+		<script type="text/javascript">
+		Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+		    switch (operator) {
+		        case '==':
+		            return (v1 == v2) ? options.fn(this) : options.inverse(this);
+		        case '===':
+		            return (v1 === v2) ? options.fn(this) : options.inverse(this);
+		        case '!=':
+		            return (v1 != v2) ? options.fn(this) : options.inverse(this);
+		        case '!==':
+		            return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+		        case '<':
+		            return (v1 < v2) ? options.fn(this) : options.inverse(this);
+		        case '<=':
+		            return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+		        case '>':
+		            return (v1 > v2) ? options.fn(this) : options.inverse(this);
+		        case '>=':
+		            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+		        case '&&':
+		            return (v1 && v2) ? options.fn(this) : options.inverse(this);
+		        case '||':
+		            return (v1 || v2) ? options.fn(this) : options.inverse(this);
+		        default:
+		            return options.inverse(this);
+		    }
+		});
+		</script>
+		<script>
+		function updateUser() {
+			var data=$('#updateUser').serializeArray();
+			if(data[1].value==""||data[2].value==""||data[3].value==""||data[4].value==""){
+				TGTool().info("修改失败,请重试");
+				return false;
+			}
+			myAjax("PUT","json","http://81.71.4.36:18080/users/adminUpdate",$('#updateUser').serialize(),"admintoken","#userListT","#userList",1,0,"已修改","一朝春去红颜老，花落人亡两不知","success");
+		}
+			function remove(id) {
+				swal({
+					title:"提示",
+					text:"将删除该用户所有数据，请谨慎操作",
+					type:"warning",
+					showCancelButton:"true",
+					showConfirmButton:"true",
+					confirmButtonText:"删除",
+					cancelButtonText:"取消",
+					animation:"pop",
+				},function(){
+					myAjax("DELETE","json","http://81.71.4.36:18080/users/delete/"+id,"-1","admintoken","#userListT","#userList",1,0,"删除成功！","“去留无意，望天上云卷云舒”","success");
+				});
+			}
+			
+			function show(id) {
+				$.ajax({
+					type: "GET",
+					dataType: "json",
+					url: "http://81.71.4.36:18080/users/get/" + id,
+					beforeSend: function(request) {
+					request.setRequestHeader("admintoken",window.localStorage.getItem("admintoken"));
+					},
+					success: function(data) {
+						var tpl = $("#userMessageT").html();
+						var template = Handlebars.compile(tpl);
+						var html = template(data);
+						$("#userMessage").html(html);
+						//弹出层
+						$('#userMessage')
+							.modal({
+								centered: false
+							})
+							.modal('show');
+					},
+					error:function(data){
+						location.href="../error/404.html";
+					}
+				});
+				
+			}
+
+			
+		</script>
+	</body>
+	<script type="text/template" id="userListT">
+	<table class="ui compact teal table">
+		<thead>
+			<tr align="center">
+				<th>ID</th>
+				<th>用户昵称</th>
+				<th>用户名</th>
+				<th>密码</th>
+				<th>邮箱</th>
+				<th>留言数</th>
+				<th>推荐</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody >
+			
+				{{#each records}}
+					<tr align="center">
+						<td>{{id}}</td>
+						<td>{{nickname}}</td>
+						<td>{{username}}</td>
+						<td>{{password}}</td>
+						<td>{{email}}</td>
+						<td>{{messageCount}}</td>
+						{{#if recommend}}
+						<td>是</td>
+						{{else}}
+						<td>否</td>
+						{{/if}}
+						<!--th:text="${#dates.format(message.createTime,'yyyy-MM-dd HH:mm')}"-->
+						<td>
+							<button class="ui mini primary basic button" type="button" onclick="show({{id}})">编辑</button>
+							<button onclick="remove({{id}})" class="ui mini red basic button">删除</a>
+						</td>
+					</tr>
+				{{/each}}
+			
+		</tbody>
+		<tfoot>
+			<tr>
+				<th colspan="8">
+					<div class="ui inverted divided stackable grid">
+						<div class="three wide column" align="center">
+							<a class="item" href="javascript:void(0)" onclick="pagesHeper({{pageNum}},{{pages}},0,'u')">上一页</a>
+						</div>
+	
+						<div class="ten wide column" align="center">
+							<p>第 <span>{{pageNum}}</span> 页，共 <span>{{pages}}</span> 页，有 <span>{{total}}</span> 位用户</p>
+						</div>
+	
+						<div class="three wide column" align="center">
+							<a class="item" href="javascript:void(0)" onclick="pagesHeper({{pageNum}},{{pages}},1,'u')">下一页</a>
+						</div>
+					</div>
+	
+	
+				</th>
+			</tr>
+		</tfoot>
+	</table>
+	</script>
+</html>

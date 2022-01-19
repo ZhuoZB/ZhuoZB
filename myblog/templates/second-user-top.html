@@ -1,0 +1,204 @@
+<div class="ui attached pointing menu">
+  		<div class="ui container">
+  			<div class="right menu" id="divUrl">
+  				<a href="user-blog.html" id="user-blog.html" class="teal item">我的博客</a>
+  				<a href="user-picture.html" id="user-picture.html" class="teal item">我的相册</a>
+  			</div>
+			<div class="ui dropdown meun">
+				<div class="ui dropdown item">
+				<img class="ui avatar image" id="userAvatar">
+				<a id="username">zhuhzuhzhzh</a>
+			    <i class="dropdown icon"></i>
+			    <div class="menu">
+				  <p class="item" onclick="showAvatar()">更换头像</p>
+				  <p class="item" onclick="javascript:$('#newnickname').modal('show')">更改昵称</p>
+				  <p class="item" onclick="javascript:$('#newpassword').modal('show')">更换密码</p>
+			      <a href="javascript:void(0)" onclick="down()" class="item">退出登陆</a>
+			    </div>
+				</div>
+			</div>
+  		</div>
+  	</div>
+	
+	<div class="ui modal" id="newpassword">
+			<div class="header">
+				更改密码
+			</div>
+			<div class="content">
+				<div class="ui equal width form">
+					<div class="fields">
+						<div class="field">
+							<label>新密码</label>
+							<input type="text" name="passwordRoNickname" id="password" placeholder="请输入新密码">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="actions">
+			
+				<div class="ui black deny button" onclick="clearContent()">
+					返回
+				</div>
+			
+				<div class="ui positive right labeled icon button" onclick="update(0)">
+					确定
+					<i class="checkmark icon"></i>
+				</div>
+				
+			</div>
+	</div>
+	
+	<div class="ui modal" id="newnickname">
+			<div class="header">
+				更改昵称
+			</div>
+			<div class="content">
+				<div class="ui equal width form">
+					<div class="fields">
+						<div class="field">
+							<label>当前昵称</label>
+							<input type="text" id="name" readonly="readonly">
+						</div>
+					</div>
+					<div class="fields">
+						<div class="field">
+							<label>新昵称</label>
+							<input type="text" name="passwordRoNickname" id="nickname" placeholder="请输入新昵称">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="actions">
+			
+				<div class="ui black deny button" onclick="clearContent()">
+					返回
+				</div>
+			
+				<div class="ui positive right labeled icon button" onclick="update(1)">
+					确定
+					<i class="checkmark icon"></i>
+				</div>
+				
+			</div>
+	</div>
+	
+	<div class="ui modal" id="heads">
+			<div class="header">
+				头像集
+			</div>
+			<div class="content">
+				<div class="ui equal width form">
+					<div class="fields" id="avatar">
+						
+					</div>
+				</div>
+			</div>
+			<div class="actions">
+			
+				<div class="ui black deny button">
+					返回
+				</div>
+			
+				<div class="ui positive right labeled icon button" onclick="save()">
+					确定
+					<i class="checkmark icon"></i>
+				</div>
+				
+			</div>
+	</div>
+	
+	<script type="text/template" id="avatarT">
+		<div class="ui tiny images">
+			{{#each this}}
+			<a href="javascript:void(0)" onclick="ask('{{url}}')">
+			<img class="ui image" src={{url}} alt="{{name}}">
+			</a>
+			{{/each}}
+		</div>
+	</script>
+	
+	<script type="text/javascript">
+		var user = JSON.parse(window.localStorage.getItem("user"));
+		var nickname=user.nickname;
+		$("#username").html(nickname);
+		$("#userAvatar").attr('src',user.avatar);
+		$("#name").val(nickname);
+		vg();
+		
+		function vg(){
+			   var myNav = document.getElementById("divUrl").getElementsByTagName("a");
+			   var myURL = document.location.href;
+			   if(document.location.href.indexOf(myNav[0].getAttribute("id"))!=-1)
+					myNav[0].className="teal active item";
+				else
+					myNav[1].className="teal active item";
+		}
+		
+		function down(){
+			swal({
+				title:nickname,
+				text:"是否下线？",
+				showCancelButton:"true",
+				showConfirmButton:"true",
+				confirmButtonText:"下线",
+				cancelButtonText:"点错了",
+				animation:"pop",
+			},function(){
+				window.localStorage.removeItem("token");
+				window.localStorage.removeItem("user");
+				window.localStorage.removeItem("code");
+				location.href="login.html";
+			})
+		}
+		
+		function showAvatar(){
+			myAjax("GET","json","http://81.71.4.36:18080/avatars","","token","#avatarT","#avatar",1,1);
+			$('#heads').modal('show')
+		}
+		
+		function update(i){
+			var data;
+			if(i==0)
+				data=$("#password").val();
+			else
+				data=$("#nickname").val();
+			myAjax("PUT","text","http://81.71.4.36:18080/users/update/"+i,{"passwordRoNickname":data},"token","#avatarT","#avatar",1,0,"已更改","下次登陆即可生效","success");	
+			clearContent();
+				
+		}
+		
+		function clearContent() {
+			$("[name='passwordRoNickname']").val('');
+		}
+		function ask(src){
+			swal({
+				title:"更换为此头像？",
+				text:"听说你有更好看的头像？在栈主或管理员底下留言分享吧！",
+				imageUrl:src,
+				showCancelButton:"true",
+				showConfirmButton:"true",
+				confirmButtonText:"确定",
+				cancelButtonText:"返回",
+				animation:"pop",
+			},function(){
+				$.ajax({
+					type: "PUT",
+					dataType: "text",
+					url: "http://81.71.4.36:18080/avatars",
+					data:{"url":src},
+					beforeSend: function(request) {
+					request.setRequestHeader("token",window.localStorage.getItem("token"));
+					},
+					success: function(data) {
+						swal("已更换","下次登陆即可生效","success");
+					},
+					error:function(data){
+						location.href="error/500.html";
+					}
+				});
+			})
+		}
+		$('.ui.dropdown').dropdown({
+		  on : 'hover'
+		});
+	</script>
