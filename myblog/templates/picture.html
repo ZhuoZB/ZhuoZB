@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>树洞-照片墙</title>
+    <link href="../static/myImages/树洞.jpg"  rel="icon" type="image/x-ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" href="../static/css/me.css">
+    <link rel="stylesheet" href="../static/lib/picture/css/jkresponsivegallery.css" >
+	<link rel="stylesheet" href="../static/css/TGTool.css">
+</head>
+<body>
+
+<!--导航-->
+<nav class="gird-header" id="nav">
+   
+   
+</nav>
+
+<!--顶部图片-->
+<div class="m-bg-type_outer" style="width: 100%;height: 40%">
+    <img src="../static/myImages/1.png"  alt="" class="ui m-bg image" style="width: 100%;height: 100%">
+    <div class="m-bg-class_cover">
+        <div class="ui container" style="position: relative ;bottom: -540px;">
+            <div class="m-font-size-title m-right-bottom" align="center" style="font-family:'STXingkai'">客栈照片墙</div>
+            <div class="m-font-size-text-init-title m-margin-top" align="center"><a href="javascript:void(0)" onclick="lookPicture(0)">我的照片墙</a></div>
+			<div class="m-font-size-text-init-title m-margin-top" align="center">愿你走出半生，归来仍是少年</div>
+        </div>
+    </div>
+</div>
+
+
+<!--照片墙-->
+<div id="picture-main">
+	
+</div>
+
+
+
+<!--底部栏-->
+<footer class="ui inverted vertical segment m-padded-tb-massive m-opacity" id="home-end">
+    
+</footer>
+<script type="text/template" id="pictureT">
+	{{#each records}}
+    <article class="thumb" >
+        <div class="ma5-gallery" >
+            <div class="rthumbnail">
+                <a href="{{picturelink}}">
+                    <img class="picture-zmki_px" src="{{picturelink}}">
+                </a>
+                <div class="m-picture-text">{{picturename}}</div>
+                <div  class="rcaption">
+                    <div style="font-size: large;">{{picturename}}</div>
+                    <div style="font-size: small" class="m-margin-top">"{{picturetime}}" &nbsp;{{pictureaddress}}</div>
+                    <p style="font-size: small">{{picturedescription}}</p>
+                </div>
+            </div>
+        </div>
+    </article>
+	{{/each}}
+	</script>
+	
+<script src="js/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+<script src="js/handlebars-v4.7.7.js" type="text/javascript"></script>
+<script src="../static/lib/picture/js/jkresponsivegallery.js" ></script>
+<script src="js/myJs.js"></script>
+<script src="js/TGTool.js"></script>
+<script src="https://eqcn.ajz.miesnfu.com/wp-content/plugins/wp-3d-pony/live2dw/lib/L2Dwidget.min.js"></script>
+
+<script>
+	     <!--小帅哥： https://unpkg.com/live2d-widget-model-chitose@1.0.5/assets/chitose.model.json-->
+	      <!--萌娘：https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json-->
+	      <!--小可爱（女）：https://unpkg.com/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json-->
+	      <!--小可爱（男）：https://unpkg.com/live2d-widget-model-haruto@1.0.5/assets/haruto.model.json-->
+	      <!--初音：https://unpkg.com/live2d-widget-model-miku@1.0.5/assets/miku.model.json-->
+	    L2Dwidget.init({ "model": { jsonPath:
+	          "https://unpkg.com/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json",
+	        "scale": 1 }, "display": { "position": "left", "width": 110, "height": 150,
+	        "hOffset": 0, "vOffset": -20 }, "mobile": { "show": true, "scale": 0.5 },
+	      "react": { "opacityDefault": 0.8, "opacityOnHover": 0.1 } });
+	  </script>
+
+<script>
+	function lookPicture(flag){
+		var user = JSON.parse(window.localStorage.getItem("user"));
+		var url="";
+			if(flag==1)
+				url="http://81.71.4.36:18080/pictures?flag=0&&userGetall=0";
+			else{
+				if(user.type==2){
+					TGTool().info("登陆后就能查看自己的照片啦！");
+					return false;
+				}else
+					url="http://81.71.4.36:18080/pictures?flag=0";	
+			}
+			$.ajax({
+				type: "GET",
+				dataType: "json",
+				url: url,
+				beforeSend: function(request) {
+				request.setRequestHeader("token",window.localStorage.getItem("token"));
+				},
+				success: function(data) {
+					var tpl = $("#pictureT").html()
+					var template = Handlebars.compile(tpl)
+					var html = template(data)
+					$("#picture-main").html(html)
+					$('.rthumbnail').responsivegallery();
+				},
+				error:function(data){
+					location.href="../error/error.html";
+				}
+			});	
+			
+	}
+	$(function(){
+		chackLogin(0);
+	  $("#nav").load("home-top.html");
+	   $("#home-end").load("home-end.html");
+	  lookPicture(1);
+	});
+</script>
+    
+</body>
+</html>

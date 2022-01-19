@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>树洞-博客</title>
+		<link href="../static/myImages/树洞.jpg"  rel="icon" type="image/x-ico">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+		<link rel="stylesheet" href="../static/css/typo.css" >
+		<link rel="stylesheet" href="../static/css/animate.css" >
+		<link rel="stylesheet" href="../static/lib/prism/prism.css" >
+		<link rel="stylesheet" href="../static/lib/tocbot/tocbot.css" >
+		<link rel="stylesheet" href="../static/css/me.css" >
+		<link rel="stylesheet" href="../static/css/timeline.css" >
+		<link rel="stylesheet" href="js/sweetalert.css" />
+		<link rel="stylesheet" href="../static/css/TGTool.css">
+	</head>
+	<body>
+
+		<!--导航-->
+		<nav class="gird-header" id="nav">
+
+		</nav>
+
+		<!--顶部图片-->
+		<div id="blog">
+			<script type="text/template" id="blogT">
+				<div class="m-bg-type_outer" style="width: 100%;height: 50%">
+  <img alt="" class="ui m-bg image" style="width: 100%;height: 100%" id="bg">
+  <div class="m-bg-class_cover">
+    <div class="ui container" style="position: relative ;bottom: -540px;">
+      <h2 class="m-font-size-title-large" align="center">{{title}}</h2>
+      <div class="ui container" align="center">
+        <div class="ui horizontal link list" align="center">
+          <div class="item">
+            <div class="ui orange basic label" style="font-size: 7px">{{flag}}</div>
+          </div>
+          <div class="item">
+            <i class="user outline outline icon m-font-size-text-mini"></i>
+            <a href="#" style="color: #ffffff;font-size: 18px">{{nickname}}</a>
+          </div>
+          <div class="item">
+            <i class="calendar icon m-font-size-text-mini"></i>
+            <span class="m-font-size-text-mini">{{updateTime}}</span>
+          </div>
+          <div class="item">
+            <i class="clone icon m-font-size-text-mini"></i>
+            <a href="#" target="_blank" style="color: #ffffff;font-size: 16px">{{typeName}}</a>
+          </div>
+          <div class="item">
+            <i class="eye icon m-font-size-text-mini"></i> <span class="m-font-size-text-mini">{{views}}</span>
+          </div>
+          <div class="item">
+            <i class="comment outline icon m-font-size-text-mini"></i>
+            <span class="m-font-size-text-mini">{{commentCount}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--中间内容-->
+<div id="waypoint" class="m-margin- animated fadeIn">
+  <div class="ui container m-opacity box-shadow-max">
+    <!--内容-->
+	
+		
+    <div class="ui attached padded segment">
+
+      <!--中间主要内容部分-->
+      <div id="content" class="typo  typo-selection js-toc-content m-padded-lr-responsive m-padded-tb-large">
+		{{{content}}}
+      </div>
+
+      <div class="ui horizontal divider">end</div>
+
+
+      <!--赞赏-->
+      <div >
+        <div class="ui center aligned basic segment">
+		{{#if appreciation}}
+		  <button id="payButton" class="ui orange basic circular button" data-content="功能暂未上线" data-position="bottom center">
+		   赞赏
+		  </button>
+		{{else}}  
+          <button id="payButton" class="ui black basic circular button" data-content="功能暂未上线" data-position="bottom center">
+		   未开启赞赏
+		  </button>
+		 {{/if}} 
+        </div>
+        <div class="ui payQR flowing popup transition hidden">
+          <div class="ui orange basic label">
+            <div class="ui images" style="font-size: inherit !important;">
+              <div class="image">
+                <img src="../static/images/zhifupay.jpg" th:src="@{/images/zhifupay.jpg}" alt="" class="ui rounded bordered image" style="width: 120px">
+                <div>支付宝</div>
+              </div>
+              <div class="image">
+                <img src="../static/images/wechatpay.jpg" th:src="@{/images/wechatpay.jpg}" alt="" class="ui rounded bordered image" style="width: 120px">
+                <div>微信</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div id="goto" class="ui attached positive message">
+      <!--博客信息-->
+      <div class="ui middle aligned grid">
+        <div class="nine wide column">
+          <ui class="list">
+            <li>博主：<span>{{nickname}}</span><a href="message.html?id={{userId}}" target="_blank">（前往博主留言板）</a></li>
+            <li>更新时间：<span>{{updateTime}}</span></li>
+			{{#if commentabled}}
+            <li>评论：已开启评论区</li>
+			{{else}}
+			<li>评论：未开启评论区</li>
+			{{/if}}
+			{{#if shareStatement}}
+            <li>转载声明：可转载原文</li>
+			{{else}}
+            <li>转载声明：不可转载原文</li>
+			{{/if}}
+			<li>转载声明：如果是转载栈主转载的文章，请附上原文链接</li>
+          </ui>
+        </div>
+        <!--微信公众号-->
+        <div class="seven wide column">
+          <img src="../static/images/oneStar1.jpg"  alt="" class="ui right floated rounded bordered image" style="width: 707px">
+        </div>
+      </div>
+	  
+    </div>
+	
+	
+    <div  class="ui bottom attached segment" id="comment">
+		<!--评论区-->
+   
+	</div>
+  </script>
+		</div>
+		</div>
+
+		</div>
+
+		<div id="toolbar" class="m-padded m-fixed m-right-bottom" style="display: none">
+			<div class="ui vertical icon buttons ">
+				<button type="button" class="ui toc teal button">目录</button>
+				<a href="#comment-container" class="ui teal button">评论</a>
+				<div id="toTop-button" class="ui icon button"><i class="chevron up icon"></i></div>
+			</div>
+		</div>
+
+		<div class="ui toc-container flowing popup transition hidden" style="width: 250px!important;">
+			<ol class="js-toc">
+
+			</ol>
+		</div>
+
+		<div id="qrcode" class="ui wechat-qr flowing popup transition hidden " style="width: 130px !important;">
+			
+		</div>
+
+
+
+		<br>
+		<br>
+
+		<script type="text/template" id="commentT">
+			<!--评论区域列表-->
+			<div id="comment-container" class="ui teal segment">
+				<div>
+					<div class="ui threaded comments" style="max-width: 100%;">
+						<h3 class="ui dividing header">评论</h3>
+						<div class="comment">
+							{{#each comments}}
+								<a class="avatar">
+									<img src="{{avatar}}">
+								</a>
+								<div class="content">
+									<a class="author">
+										<span>{{nickname}}</span>
+										<div class="ui mini basic teal left pointing label m-padded-mini">
+										{{#if adminComment}}
+											栈主
+										{{else if blogger}}
+											博主
+										{{else}}
+											访客
+										{{/if}}
+										</div>
+									</a>
+									<div class="metadata">
+										<span class="date">{{createTime}}</span>
+									</div>
+									<div class="text">
+										{{content}}
+									</div>
+									<div class="actions">
+										<a class="reply" data-commentid="{{id}}" data-commentnickname="{{nickname}}"
+											onclick="reply(this)">回复</a>
+										<a class="delete" href="javascript:void(0)"
+											onclick="deleteComment({{id}})">删除</a>
+
+									</div>
+								</div>
+
+								<!--子集评论-->
+								<div class="comments">
+									{{#each replyComments}}
+										<div class="comment">
+											<a class="avatar">
+												<img src="{{avatar}}">
+											</a>
+											<div class="content">
+												<a class="author">
+													<span>{{nickname}}</span>
+													<div class="ui mini basic teal left pointing label m-padded-mini">
+													{{#if adminComment}}
+														栈主
+													{{else if blogger}}
+														博主
+													{{else}}
+														访客
+													{{/if}}
+													</div>
+													&nbsp;<span class="m-teal">@ {{parentNickname}}</span>
+												</a>
+												<div class="metadata">
+													<span class="date">{{createTime}}</span>
+												</div>
+												<div class="text">
+													{{content}}
+												</div>
+												<div class="actions">
+													<a class="reply" data-commentid="{{id}}"
+														data-commentnickname="{{nickname}}" onclick="reply(this)">回复</a>
+													<a class="delete" href="javascript:void(0)"
+														onclick="deleteComment({{id}})">删除</a>
+												</div>
+											</div>
+										</div>
+									{{/each}}
+								</div>
+							{{/each}}
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<div id="comment-form" class="ui form">
+				<form id="commentForm">
+					<input type="hidden" name="blogId" id="blog_id" value="{{blogId}}">
+					<input type="hidden" name="parentCommentId" value="-1" >
+					<div class="field">
+						<textarea name="content" placeholder="请输入评论信息..."></textarea>
+					</div>
+					<div class="fields">
+						<div class="field m-mobile-wide m-margin-bottom-small" id="uemail" hidden="hidden">
+							<div class="ui left icon input" >
+								<i class="mail icon"></i>
+								<input type="text" name="email" placeholder="邮箱">
+							</div>
+						</div>
+						<div class="field  m-margin-bottom-small m-mobile-wide">
+							<button id="commentpost-btn" type="button" onclick="saveComment()"
+								class="ui teal button m-mobile-wide"><i class="edit icon"></i>发布</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</script>
+
+		<!--底部栏-->
+		<footer class="ui inverted vertical segment m-padded-tb-massive m-opacity" id="home-end">
+
+
+		</footer>
+
+
+		<script src="js/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+		<script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
+		<script src="../static/lib/qrcode/qrcode.min.js" ></script>
+		<script src="../static/lib/prism/prism.js"></script>
+		<script src="../static/lib/tocbot/tocbot.min.js" ></script>
+		<script src="js/handlebars-v4.7.7.js" type="text/javascript"></script>
+		<script src="../static/lib/waypoints/jquery.waypoints.min.js"></script>
+		<script src="js/myJs.js"></script>
+		<script src="js/sweetalert-dev.js"></script>
+		<script src="js/TGTool.js"></script>
+		<script src="https://eqcn.ajz.miesnfu.com/wp-content/plugins/wp-3d-pony/live2dw/lib/L2Dwidget.min.js"></script>
+		
+		<script>
+			     <!--小帅哥： https://unpkg.com/live2d-widget-model-chitose@1.0.5/assets/chitose.model.json-->
+			      <!--萌娘：https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json-->
+			      <!--小可爱（女）：https://unpkg.com/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json-->
+			      <!--小可爱（男）：https://unpkg.com/live2d-widget-model-haruto@1.0.5/assets/haruto.model.json-->
+			      <!--初音：https://unpkg.com/live2d-widget-model-miku@1.0.5/assets/miku.model.json-->
+			    L2Dwidget.init({ "model": { jsonPath:
+			          "https://unpkg.com/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json",
+			        "scale": 1 }, "display": { "position": "left", "width": 110, "height": 150,
+			        "hOffset": 0, "vOffset": -20 }, "mobile": { "show": true, "scale": 0.5 },
+			      "react": { "opacityDefault": 0.8, "opacityOnHover": 0.1 } });
+			  </script>
+		<script>
+			var blogId = searchurl("id");
+			var userId="";
+			$(function() {
+				chackLogin(0);
+				$("#nav").load("home-top.html")
+				$("#home-end").load("home-end.html")
+			});
+			function searchurl(str) {
+				var LocString = String(window.document.location.href);
+				var rs = new RegExp("(^|)" + str + "=([^&]*)(&|$)", "gi").exec(LocString),
+					tmp;
+				if (tmp = rs) return tmp[2];
+				return null;
+			}
+
+			function deleteComment(commentId) {
+				swal({
+					title:"提示",
+					text:"删除将不可撤销，是否删除？",
+					type:"warning",
+					showCancelButton:"true",
+					showConfirmButton:"true",
+					confirmButtonText:"确定",
+					cancelButtonText:"取消",
+					animation:"pop",
+				},function(){
+					MandCAjax(1,"DELETE","json","http://81.71.4.36:18080/comments/"+blogId+"/"+ commentId,"-1","token","#commentT","#comment",1,0,"已删除","“再美好也经不住遗忘,再悲伤也抵不过时间”","success");
+					var user= JSON.parse(localStorage.getItem('user'));
+					$("#userId").val(user.id);
+				});	
+			}
+
+			function saveComment() {
+				$('.ui.form').form({
+				    fields: {
+				      content     : 'empty'
+				    }
+				  });
+				var boo = $('.ui.form').form('validate form');
+				if (!boo) 
+				    return false;
+				MandCAjax(1,"POST","json","http://81.71.4.36:18080/comments/save/"+userId,$('#commentForm').serialize(),"token","#commentT","#comment",1,1);
+				setTimeout("TGTool().success('已评论')",700);
+				clearContent();
+			}
+			$(function() {
+				if (blogId != null) {
+					$.ajax({
+						type: "GET",
+						dataType: "json",
+						url: "http://81.71.4.36:18080/indexBlogs/"+blogId,
+						beforeSend: function(request) {
+							request.setRequestHeader("token", window.localStorage.getItem("token"));
+						},
+						success: function(data) {
+							userId=data.userId//全局userId
+							var tpl = $("#blogT").html()
+							var template = Handlebars.compile(tpl)
+							var html = template(data)
+							$("#blog").html(html)
+							$("#bg").attr('src',data.firstPicture);
+							if(data.commentabled)
+								MandCAjax(1,"GET","json","http://81.71.4.36:18080/comments/"+blogId,$('#commentForm').serialize(),"token","#commentT","#comment",1,1);
+							$('#payButton').popup();
+						},
+						error:function(data){
+							location.href="error/404.html";
+						}
+					});
+				}
+			});
+			function clearContent() {
+				$("[name='nickname']").val('');
+				$("[name='email']").val('');
+				$("[name='content']").val('');
+				$("[name='parentComment.id']").val(-1);
+				$("[name='content']").attr("placeholder", "请输入评论信息...");
+			}
+
+			function reply(obj) {
+				var commentId = $(obj).data('commentid');
+				var commentNickname = $(obj).data('commentnickname');
+				$("[name='content']").attr("placeholder", "@" + commentNickname).focus();
+				$("[name='parentCommentId']").val(commentId);
+				$(window).scrollTo($('#comment-form'), 500);
+			}
+		</script>
+	</body>
+</html>

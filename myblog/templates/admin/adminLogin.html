@@ -1,0 +1,61 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	 <title>树洞后台管理登录</title>
+	<link href="../../static/myImages/树洞.jpg" rel="icon" type="image/x-ico">
+    <link rel="stylesheet" type="text/css" href="../../static/css/login.css"/> 
+	 <link rel="stylesheet"  type="text/css" href="../js/sweetalert.css"/>
+	 <link rel="stylesheet"  href="../../static/css/TGTool.css"/>
+</head>  
+<body background="../../static/myImages/a.jpg">  
+    <div id="login">  
+        <h1>后台登陆</h1>  
+        <form id="loginForm">  
+            <input type="text"  placeholder="用户名" name="username">  
+            <input type="text"  placeholder="密码" name="password">  
+            <button class="but" type="button" onclick="login()">登录</button>  
+        </form>  
+    </div>  
+</body> 
+ <script src="../js/jquery.min.js" type="text/javascript"></script>
+ <script src="../js/sweetalert-dev.js"></script>
+ <script src="../js/TGTool.js" type="text/javascript"></script>
+<script >
+function login(){
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			data:$('#loginForm').serialize(),
+			url: "http://81.71.4.36:18080/users/login?admin=1",
+			success: function(data) {
+					if(data.admincode==4){
+						window.localStorage.setItem("admintoken", data.admintoken);
+						window.localStorage.setItem("adminuser", JSON.stringify(data.adminuser));
+						window.localStorage.setItem("admincode",data.admincode);
+						var text="欢迎"+data.adminuser.nickname+"栈主";
+						swal({title: "登陆成功!",text: text,
+						showConfirmButton:"true", confirmButtonText: "ok"},function(){location.href="index.html"})
+						return false;
+					}
+					else{
+					var code=data.admincode!=null?data.admincode:data.code;
+					if(code==2) {
+						TGTool().info("密码错误！");
+						return false;
+					}
+					if(code==1){
+						TGTool().info("账户或密码错误！");
+						return false;
+					}
+					if(code==5){
+						TGTool().info("这儿是树洞的秘密基地，想进来可得经过栈主的同意哦");
+						return false;
+					}
+				}
+			}
+		});
+	}
+</script>
+</html>  

@@ -1,0 +1,88 @@
+<!--容器-->
+    <div class="ui center aligned container">
+        <div class="ui inverted divided stackable grid">
+            <div class="four wide column">
+                <div style="font-size: large;font-weight: bold" class="ui inverted m-text-thin m-text-spaced m-margin-top-max" >联系我</div>
+                <div class="ui inverted link list">
+                    <div href="#" class="m-text-thin">Email：1465675493@qq.com</div>
+                    <div href="#" class="m-text-thin">QQ：1465675493</div>
+                </div>
+            </div>
+
+            <div class="four wide column" >
+                <div class="ui inverted link list">
+                    <div class="item">
+                        <!--微信二维码-->
+                        <div style="font-size: large;font-weight: bold" class="ui inverted m-text-thin m-text-spaced " >虎年吉祥卡</div>
+                        <img src="../static/myImages/虎年大吉.jpg"   class="ui m-margin-top rounded image" alt="" style="width: 110px">
+                    </div>
+                </div>
+            </div>
+
+            <div class="four wide column">
+                <div class="ui inverted link list">
+                    <div class="item">
+                        <!--微信二维码-->
+                        <div style="font-size: large;font-weight: bold" class="ui inverted m-text-thin m-text-spaced " >虎虎生威卡</div>
+                        <img src="../static/myImages/虎宝.jpg"  class="ui m-margin-top rounded image" alt="" style="width: 110px">
+                    </div>
+                </div>
+            </div>
+            <!--博客运行时间统计-->
+            <div class="four wide column">
+                <div style="font-size: large;font-weight: bold" class="ui inverted  m-text-thin m-text-spaced m-margin-top">客栈信息</div>
+                <!--<p id="htmer_time" class="item m-text-thin"></p>-->
+                <div id="blog-message">
+					<script type="text/template" id="blogsMessagesT">
+                    <div class="ui inverted link list" style="align-content: center;margin-top: 10px">
+                        <div class="m-text-thin" style="text-align: left;margin-left: 75px;">
+                            客栈文章总数： <h2 class="ui orange header m-inline-block m-margin-top-null" style="font-size:medium;"> {{[0]}} </h2> 篇
+                        </div>
+                        <div class="m-text-thin" style="text-align: left;margin-left: 75px">
+                            客栈访问总数： <h2 class="ui orange header m-inline-block m-margin-top-null" style="font-size:medium;"> {{[1]}} </h2> 次
+                        </div>
+                        <div class="m-text-thin" style="text-align: left;margin-left: 75px">
+                            客栈评论总数： <h2 class="ui orange header m-inline-block m-margin-top-null" style="font-size:medium;"> {{[2]}} </h2> 条
+                        </div>
+                        <div class="m-text-thin" style="text-align: left;margin-left: 75px">
+                            客栈留言总数： <h2 class="ui orange header m-inline-block m-margin-top-null" style="font-size:medium;"> {{[3]}} </h2> 条
+                        </div>
+                    </div>
+					</script>
+                </div>
+            </div>
+        </div>
+        <div class="ui inverted section divider"></div>
+        <div style="color: #F08047;margin-top: -18px" class="ui inverted m-text-thin m-text-spaced">我的客栈已营业：<span id="htmer_time" class="item m-text-thin"></span> (*๓´╰╯`๓)</div>
+        <a rel="nofollow" href="javascript:void(0)">-</a>
+    </div>
+    </div>
+	<script src="js/handlebars-v4.7.7.js" type="text/javascript"></script>
+	
+	
+	<script>
+		$(function(){
+			$.ajax({
+				type: "GET",
+				dataType: "json",
+				url: "http://81.71.4.36:18080/indexBlogs/blogsMessages",
+				beforeSend: function(request) {
+					request.setRequestHeader("token",window.localStorage.getItem("token"));
+				},
+				success: function(data) {
+					var tpl = $("#blogsMessagesT").html()
+					var template = Handlebars.compile(tpl)
+					var html = template(data)
+					$("#blog-message").html(html)
+				},
+				error:function(data){
+					location.href="error/500.html";
+				}
+			});
+			});
+			setInterval(setTime, 1000);
+			$('.ui.dropdown').dropdown({
+			  on : 'hover'
+			});
+	</script>
+	

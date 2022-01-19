@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>树洞-留言板</title>
+  <link href="../static/myImages/树洞.jpg"  rel="icon" type="image/x-ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+  <link rel="stylesheet" href="../static/css/me.css" >
+   <link rel="stylesheet" href="js/sweetalert.css">
+   <link rel="stylesheet" href="../static/css/TGTool.css">
+</head>
+<body>
+
+<!--导航-->
+<nav class="gird-header" id="nav">
+  
+</nav>
+
+
+<!--顶部图片-->
+<div class="m-bg-type_outer" style="width: 100%;height: 40%">
+  <img src="../static/myImages/三小只.jpg" alt="" class="ui m-bg image" style="width: 100%;height: 100%">
+  <div class="m-bg-class_cover">
+    <div class="ui container" style="position: relative ;bottom: -540px;">
+      <div class="m-font-size-title m-right-bottom" align="center" style="font-family:'STXingkai'">留言板</div>
+      <div class="m-font-size-text-init-title m-margin-top" align="center">虽然只是短暂的擦身，相遇与分别，尽管如此，我却仍然想珍惜这所有的一切</div>
+
+    </div>
+  </div>
+</div>
+
+
+<!--中间内容-->
+<div id="waypoint" class="m-margin- animated fadeIn">
+  <div class="ui container m-opacity box-shadow-max">
+      <!--                新增留言-->
+      <div  class="ui form">
+		  <form id="message-form">
+          <input type="hidden" name="parentMessageId" value="-1">
+		  <input type="hidden" name="toUserId" id="toUserId">
+          <!--                    留言区-->
+          <div class="field">
+              <textarea name="content" placeholder="请输入留言信息..."></textarea>
+          </div>
+          <div class="ui grid">
+              <!--                        输入邮箱-->
+              <div class="five wide column" >
+              <div class="field m-mobile-wide m-margin-bottom-small" hidden="hidden" id="showemail">
+                  <div class="ui left icon input">
+                      <i class="mail icon"></i>
+                      <input type="text" name="email" placeholder="Email">
+                  </div>
+              </div>
+              </div>
+              <div class="right aligned six wide column">
+              <div class="field m-mobile-wide m-margin-bottom-small">
+                  <button id="messagepost-btn" type="button" onclick="saveMessage()" class="ui teal button m-mobile-wide"><i class="edit icon"></i>发布</button>
+              </div>
+              </div>
+          </div>
+		  </form>
+      </div>
+      <!--留言区-->
+      <div class="ui bottom attached m-margin-top" id="message">
+		 
+		 
+      </div>
+		
+    <br>
+    <br>
+    <br>
+
+  </div>
+</div>
+
+
+<br>
+<br>
+<br>
+
+<script type="text/template" id="messageT">
+          <div id="message-container" class="ui teal segment">
+              <div>
+                  <div class="ui threaded comments" style="max-width: 100%;">
+                      <h3 class="ui dividing header">留言</h3>
+                      <div class="comment">
+					  {{#if this}}
+					  {{#each this}}
+                          <a class="avatar">
+                              <img src="{{avatar}}">
+                          </a>
+                          <div class="content">
+                              <a class="author">
+                                  <span>{{nickname}}</span>
+                                  <div class="ui mini basic teal left pointing label m-padded-mini">
+								 {{#if adminMessage}}
+								 	栈主
+								 {{else if blogger}}
+								 	博主
+								 {{else}}
+								 	游客
+								 {{/if}}
+								  </div>
+                              </a>
+                              <div class="metadata">
+                                  <span class="date">{{createTime}}</span>
+                              </div>
+                              <div class="text">{{content}} </div>
+                              <div class="actions">
+                                  <a class="reply" data-messageid="{{id}}" data-touserid="{{toUserId}}" data-messagenickname="{{nickname}}" onclick="reply(this)">回复</a>
+                                 <span id="hi">
+								 <a class="delete" href="#" onclick="deleteMessage({{toUserId}},{{id}})" >删除</a>
+								 </span>
+								  
+                              
+							  </div>
+                          </div>
+                          <!--子集留言-->
+                          <div class="comments">
+								{{#if replyMessages}}
+								{{#each replyMessages}}
+                              <div class="comment">
+                                  <a class="avatar">
+                                      <img src="{{avatar}}">
+                                  </a>
+                                  <div class="content">
+                                      <a class="author">
+                                          <span>{{nickname}}</span>
+                                          <div class="ui mini basic teal left pointing label m-padded-mini">
+										   {{#if adminMessage}}
+										  	栈主
+										  	{{else if blogger}}
+										  	博主
+											{{else}}
+											游客
+										  	{{/if}}
+										  </div>
+                                          &nbsp;<span class="m-teal">@ {{parentNickname}}</span>
+                                      </a>
+                                      <div class="metadata">
+                                          <span class="date">{{createTime}}</span>
+                                      </div>
+                                      <div class="text">{{content}} </div>
+                                      <div class="actions">
+                                          <a class="reply" data-messageid="{{id}}" data-touserid="{{toUserId}}" data-messagenickname="{{nickname}}" onclick="reply(this)">回复</a>
+                                          <a class="delete" href="#" onclick="deleteMessage({{toUserId}},{{id}})" id="aa">删除</a>
+                                      </div>
+                                  </div>
+                              </div>
+							{{/each}}
+							{{/if}}
+                          </div>
+					{{/each}}
+					{{/if}}
+					</div>
+                  </div>
+              </div>
+
+          </div>
+		</script>
+<!--底部栏-->
+<footer class="ui inverted vertical segment m-padded-tb-massive m-opacity" id="home-end">
+    
+
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+<script src="js/handlebars-v4.7.7.js"></script>
+<script src="js/sweetalert-dev.js"></script>
+<script src="js/myJs.js"></script>
+<script src="js/TGTool.js"></script>
+<script src="https://eqcn.ajz.miesnfu.com/wp-content/plugins/wp-3d-pony/live2dw/lib/L2Dwidget.min.js"></script>
+
+<script>
+	     <!--小帅哥： https://unpkg.com/live2d-widget-model-chitose@1.0.5/assets/chitose.model.json-->
+	      <!--萌娘：https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json-->
+	      <!--小可爱（女）：https://unpkg.com/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json-->
+	      <!--小可爱（男）：https://unpkg.com/live2d-widget-model-haruto@1.0.5/assets/haruto.model.json-->
+	      <!--初音：https://unpkg.com/live2d-widget-model-miku@1.0.5/assets/miku.model.json-->
+	    L2Dwidget.init({ "model": { jsonPath:
+	          "https://unpkg.com/live2d-widget-model-koharu@1.0.5/assets/koharu.model.json",
+	        "scale": 1 }, "display": { "position": "left", "width": 110, "height": 150,
+	        "hOffset": 0, "vOffset": -20 }, "mobile": { "show": true, "scale": 0.5 },
+	      "react": { "opacityDefault": 0.8, "opacityOnHover": 0.1 } });
+	  </script>
+<script>
+	$(function(){
+		chackLogin(0);
+	  $("#nav").load("home-top.html")
+	  $("#home-end").load("home-end.html")
+	  getMessages()
+	});
+	function edit(str){
+		var LocString=String(window.document.location.href);
+		 var rs=new RegExp("(^|)"+str+"=([^&]*)(&|$)","gi").exec(LocString),tmp;
+		 if(tmp=rs)
+			return tmp[2];
+		 return 0;        
+	}
+	function getMessages(){
+		var id=edit("id");
+		var url="";
+		if(id==0){
+			var user= JSON.parse(localStorage.getItem('user'));
+			url="http://81.71.4.36:18080/messages/" + user.id;
+		}
+		else{
+			url="http://81.71.4.36:18080/messages/" + id;
+		}
+		MandCAjax(0,"GET","json",url,"","token","#messageT","#message",1,1);
+	}
+	function deleteMessage(toUserId,id){
+		swal({
+			title:"删除该留言？",
+			showCancelButton:"true",
+			showConfirmButton:"true",
+			confirmButtonText:"确定",
+			cancelButtonText:"取消",
+			animation:"pop",
+		},function(){
+			MandCAjax(0,"DELETE","json","http://81.71.4.36:18080/messages/"+toUserId+"/"+id,"","token","#messageT","#message",1,0,"已删除","“闲看花开，静待花落，冷暖自知，干净如始”","success");
+		})
+	}
+	function saveMessage(){
+		$('.ui.form').form({
+		    fields: {
+		      content     : 'empty'
+		    }
+		  });
+		var boo = $('.ui.form').form('validate form');
+		if (!boo) 
+		    return false;
+		MandCAjax(0,"POST","json","http://81.71.4.36:18080/messages",$('#message-form').serialize(),"token","#messageT","#message",1,1);
+		setTimeout("TGTool().success('已留言')",700);
+		clearContent();
+	}
+    // 清除表单
+    function clearContent() {
+		$("[name='toUserId']").val('');
+        $("[name='nickname']").val('');
+        $("[name='email']").val('');
+        $("[name='content']").val('');
+        $("[name='parentMessageId']").val(-1);
+        $("[name='content']").attr("placeholder", "请输入留言信息...");
+    }
+
+     function reply(obj) {
+         var messageId = $(obj).data('messageid');
+         var messageNickname = $(obj).data('messagenickname');
+		 var toUserId=$(obj).data('touserid');
+         $("[name='content']").attr("placeholder", "@"+messageNickname).focus();
+		 $("[name='parentMessageId']").val(messageId);
+		 $("[name='toUserId']").val(toUserId);
+     }
+
+</script>
+</body>
+ 
+</html>
