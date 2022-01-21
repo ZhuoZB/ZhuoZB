@@ -116,7 +116,7 @@
 		$.ajax({
 			type: "POST",
 			dataType: "json",
-			url: "http://81.71.4.36:18080/users/visitor",
+			url: "//81.71.4.36:18080/users/visitor",
 			success: function(data) {
 				window.localStorage.setItem("token", data.token);
 				window.localStorage.setItem("user", JSON.stringify(data.user));
